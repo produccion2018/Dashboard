@@ -31,7 +31,7 @@ export function SalesChart() {
                 borderRadius: "0.75rem",
                 color: "var(--color-foreground)",
               }}
-              formatter={(value: number | string | undefined) => [`$${Number(value).toLocaleString()}`]}
+              formatter={(value) => [`$${Number(value).toLocaleString()}`]}
             />
             <Line type="monotone" dataKey="ventas" stroke="var(--color-chart-1)" strokeWidth={2.5} dot={false} activeDot={{ r: 5 }} />
             <Line type="monotone" dataKey="objetivo" stroke="var(--color-chart-4)" strokeWidth={2} strokeDasharray="6 6" dot={false} />

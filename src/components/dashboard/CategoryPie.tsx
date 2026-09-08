@@ -31,7 +31,7 @@ export function CategoryPie() {
                 borderRadius: "0.75rem",
                 color: "var(--color-foreground)",
               }}
-              formatter={(value: number | string | undefined) => [`${value}%`]}
+              formatter={(value) => [`${value}%`]}
             />
           </PieChart>
         </ResponsiveContainer>

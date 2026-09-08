@@ -93,9 +93,9 @@ const estados: TransactionStatus[] = ["completado", "pendiente", "fallido"];
 
 export const transactions: Transaction[] = Array.from({ length: 38 }, (_, i) => ({
   id: `TRX-${(10240 - i).toString()}`,
-  cliente: nombres[i % nombres.length],
-  producto: productos[(i * 3 + 1) % productos.length],
+  cliente: nombres[i % nombres.length]!,
+  producto: productos[(i * 3 + 1) % productos.length]!,
   fecha: `${String(28 - (i % 28)).padStart(2, "0")}/09/2026`,
   monto: Math.round((49 + ((i * 137) % 950)) * 100) / 100,
-  estado: estados[i % 7 === 5 ? 1 : i % 11 === 7 ? 2 : 0],
+  estado: estados[i % 7 === 5 ? 1 : i % 11 === 7 ? 2 : 0]!,
 }));
