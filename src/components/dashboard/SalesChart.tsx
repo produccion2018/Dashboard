@@ -3,7 +3,7 @@ import { monthlySales } from "@/lib/dashboard-data";
 
 export function SalesChart() {
   return (
-    <div className="card-glow df-lift rounded-2xl p-5 lg:col-span-2">
+    <div className="card-glow df-lift flex flex-col rounded-2xl p-5 lg:col-span-2">
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h2 className="font-display text-lg font-semibold">Ventas mensuales</h2>
@@ -18,7 +18,7 @@ export function SalesChart() {
           </span>
         </div>
       </div>
-      <div className="h-72">
+      <div className="h-72 flex-1 lg:h-auto lg:min-h-72">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={monthlySales} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
             <defs>

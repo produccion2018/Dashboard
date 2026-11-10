@@ -416,3 +416,46 @@
     animation: none !important;
   }
 }
+
+/* ───────────── DataFlow · diseño premium ───────────── */
+.df-ring {
+  stroke-dashoffset: var(--ring-full);
+  animation: df-ring 1.8s cubic-bezier(0.2, 0.8, 0.2, 1) 2.1s forwards;
+}
+@keyframes df-ring {
+  to {
+    stroke-dashoffset: var(--ring-off);
+  }
+}
+.df-col {
+  transform-origin: bottom;
+  animation: df-col 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes df-col {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .df-ring,
+  .df-col {
+    animation: none !important;
+    stroke-dashoffset: var(--ring-off);
+  }
+}
+.df-row {
+  animation: df-row 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes df-row {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
