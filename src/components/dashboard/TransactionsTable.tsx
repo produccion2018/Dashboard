@@ -75,6 +75,7 @@ export function TransactionsTable() {
               <th className="hidden pb-3 pr-4 font-medium sm:table-cell">Fecha</th>
               <th className="pb-3 pr-4 font-medium">
                 <button
+                  data-tour="sort"
                   onClick={() => setAsc(!asc)}
                   className="flex items-center gap-1 uppercase hover:text-foreground"
                 >
@@ -131,6 +132,7 @@ export function TransactionsTable() {
         </span>
         <div className="flex gap-2">
           <button
+            data-tour="prev"
             onClick={() => setPage((p) => Math.max(0, p - 1))}
             disabled={page === 0}
             className="flex items-center gap-1 rounded-lg border px-3 py-1.5 transition-colors hover:bg-muted disabled:opacity-40"
@@ -138,6 +140,7 @@ export function TransactionsTable() {
             <ChevronLeft className="h-4 w-4" /> Anterior
           </button>
           <button
+            data-tour="next"
             onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))}
             disabled={page >= pageCount - 1}
             className="flex items-center gap-1 rounded-lg border px-3 py-1.5 transition-colors hover:bg-muted disabled:opacity-40"

@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   Activity,
@@ -206,12 +206,92 @@ function YearBanner() {
   );
 }
 
+/* ───────── Recorrido automático (?tour=1, lo usa el portfolio) ─────────
+   Ejecuta un paso cada `interval` ms. Si el usuario hace clic, scroll o toca la
+   pantalla, se pausa y retoma solo después de unos segundos sin actividad. */
+function useDemoTour(steps: Array<() => void>, interval = 3800, startDelay = 2600) {
+  const [active, setActive] = useState(false);
+  const stepsRef = useRef(steps);
+  stepsRef.current = steps;
+
+  useEffect(() => {
+    if (!new URLSearchParams(window.location.search).has("tour")) return;
+    setActive(true);
+    let i = 0;
+    let paused = false;
+    let idle = 0;
+    let timer = 0;
+    const onUser = () => {
+      paused = true;
+      window.clearTimeout(idle);
+      idle = window.setTimeout(() => (paused = false), 9000);
+    };
+    const evs = ["wheel", "touchstart", "mousedown", "keydown"] as const;
+    evs.forEach((e) => window.addEventListener(e, onUser, { passive: true }));
+    const start = window.setTimeout(() => {
+      timer = window.setInterval(() => {
+        if (paused) return;
+        const list = stepsRef.current;
+        list[i % list.length]?.();
+        i++;
+      }, interval);
+    }, startDelay);
+    return () => {
+      window.clearTimeout(start);
+      window.clearInterval(timer);
+      window.clearTimeout(idle);
+      evs.forEach((e) => window.removeEventListener(e, onUser));
+    };
+  }, [interval, startDelay]);
+
+  return active;
+}
+
+const goTo = (id: string) => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  window.scrollTo({
+    top: el.getBoundingClientRect().top + window.scrollY - 90,
+    behavior: "smooth",
+  });
+};
+const clickTour = (name: string) =>
+  document.querySelector<HTMLButtonElement>(`[data-tour="${name}"]:not(:disabled)`)?.click();
+
 function Dashboard() {
   const [range, setRange] = useState(2);
+
+  const touring = useDemoTour([
+    () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      setRange(0);
+    },
+    () => setRange(1),
+    () => setRange(3),
+    () => goTo("df-kpis"),
+    () => goTo("df-charts"),
+    () => goTo("df-table"),
+    () => clickTour("next"),
+    () => clickTour("next"),
+    () => clickTour("sort"),
+    () => {
+      clickTour("prev");
+      window.setTimeout(() => clickTour("prev"), 300);
+      window.setTimeout(() => clickTour("prev"), 600);
+      setRange(2);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+  ]);
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-background">
       <Intro />
+      {touring && (
+        <div className="pointer-events-none fixed bottom-5 left-1/2 z-50 -translate-x-1/2 rounded-full border border-primary/40 bg-background/80 px-4 py-2 text-xs text-muted-foreground shadow-lg backdrop-blur-xl">
+          <span className="mr-2 inline-block h-2 w-2 animate-pulse rounded-full bg-primary align-middle" />
+          Recorrido automático · tocá o deslizá para explorar
+        </div>
+      )}
 
       {/* Fondo animado */}
       <div className="df-grid" />
@@ -320,7 +400,7 @@ function Dashboard() {
           <YearBanner />
 
           {/* KPIs */}
-          <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <section id="df-kpis" className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {kpis.map((kpi, i) => (
               <div key={kpi.id} className="df-rise" style={d(3 + i)}>
                 <KpiCard kpi={kpi} index={i} />
@@ -329,13 +409,17 @@ function Dashboard() {
           </section>
 
           {/* Charts */}
-          <section className="df-rise grid grid-cols-1 gap-4 lg:grid-cols-3" style={d(7)}>
+          <section
+            id="df-charts"
+            className="df-rise grid grid-cols-1 gap-4 lg:grid-cols-3"
+            style={d(7)}
+          >
             <SalesChart />
             <CategoryPie />
           </section>
 
           {/* Table */}
-          <div className="df-rise" style={d(8)}>
+          <div id="df-table" className="df-rise" style={d(8)}>
             <TransactionsTable />
           </div>
         </main>
